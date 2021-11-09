@@ -34,7 +34,7 @@ class EditProfileForm(FlaskForm):
     about_me = TextAreaField("About_me", validators=[Length(min=0, max=140)])
     submit = SubmitField("Submit")
     
-    def validate_username(self, username):
-        user = User.query.filter_by(username=username.data).first()
-        if user is not None:
-            raise ValidationError("This username has already been taken. Try another one.")
+    # def validate_username(self, username):
+    #     user = User.query.filter_by(username=username.data).first()
+    #     if user is not None:
+    #         raise ValidationError("This username has already been taken. Try another one.")

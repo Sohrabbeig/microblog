@@ -17,7 +17,7 @@ def before_request():
 @app.route("/index")
 @login_required
 def index():
-    return render_template("index.html", title="Home", user=current_user)
+    return render_template("index.html", title="Home")
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -30,12 +30,12 @@ def login():
             flash("Invalid username or password!")
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
-        next_page = request.args.get(next)
+        next_page = request.args.get('next')
         print(next_page)
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)
-    return render_template("login.html", title="Login", form=form, user=current_user)
+    return render_template("login.html", title="Login", form=form)
 
 @app.route('/logout')
 def logout():
@@ -55,7 +55,7 @@ def register():
         flash("Congratulations! your are now registered.")
         return redirect(url_for('login'))
     
-    return render_template("register.html", title="Register", form=form, user=current_user)
+    return render_template("register.html", title="Register", form=form)
 
 @app.route('/user/<username>')
 @login_required
@@ -76,4 +76,4 @@ def edit_profile():
     elif request.method == 'GET':
         form.username.data = current_user.username
         form.about_me.data = current_user.about_me
-    return render_template("edit_profile.html", title= "Edit Profile", user=current_user, form=form)
+    return render_template("edit_profile.html", title= "Edit Profile", form=form)
