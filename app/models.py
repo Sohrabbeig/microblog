@@ -62,7 +62,7 @@ class User(db.Model, UserMixin):
         followed = Post.query.join(followers,
                         (followers.c.followed_id == Post.user_id)
                     ).filter(followers.c.follower_id == self.id)
-        return followed.union(self.posts).order_by(Post.timestamp.desc()).all()
+        return followed.union(self.posts).order_by(Post.timestamp.desc())
 
 @login.user_loader
 def load_user(id):

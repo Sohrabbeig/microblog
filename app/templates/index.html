@@ -2,7 +2,7 @@
 
 {% block content %}
          <h1>Hi, {{  current_user.username  }}</h1>
-         {% for post in current_user.posts %}
+         {% for post in current_user.followed_posts().all() %}
          <div>
              <p>{{post.author.username}} says: {{post.body}}</p>
          </div>
