@@ -2,8 +2,9 @@ from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app.forms import EditProfileForm, LoginForm, RegisterationForm
-from app.models import User
+from app import forms
+from app.forms import EditProfileForm, LoginForm, RegisterationForm, PostForm
+from app.models import User, Post
 from datetime import datetime
 
 @app.before_request
@@ -13,11 +14,17 @@ def before_request():
         db.session.commit()
 
 
-@app.route("/")
-@app.route("/index")
+@app.route("/", methods=["GET", "POST"])
+@app.route("/index", methods=["GET", "POST"])
 @login_required
 def index():
-    return render_template("index.html", title="Home")
+    form = PostForm()
+    if form.validate_on_submit():
+        post = Post(body=form.status.data, author=current_user)
+        db.session.add(post)
+        db.session.commit()
+        
+    return render_template("index.html", title="Home", form=form)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -31,7 +38,6 @@ def login():
             return redirect(url_for('login'))
         login_user(user, remember=form.remember_me.data)
         next_page = request.args.get('next')
-        print(next_page)
         if not next_page or url_parse(next_page).netloc != '':
             next_page = url_for('index')
         return redirect(next_page)

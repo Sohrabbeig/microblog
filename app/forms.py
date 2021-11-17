@@ -43,3 +43,7 @@ class EditProfileForm(FlaskForm):
             user = User.query.filter_by(username=username.data).first()
             if user is not None:
                 raise ValidationError("This username has already been taken. Try another one.")
+
+class PostForm(FlaskForm):
+    status = TextAreaField("Status", validators=[DataRequired(), Length(min=1, max=280)])
+    submit = SubmitField("Send")
