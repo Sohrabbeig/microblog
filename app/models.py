@@ -55,10 +55,6 @@ class User(db.Model, UserMixin):
         return self.followed.filter(followers.c.followed_id == user.id).count() > 0
 
     def followed_posts(self):
-        # followed = self.followed.join(
-        #                 Post,
-        #                 (followers.c.followed_id == Post.user_id)
-        #             )
         followed = Post.query.join(followers,
                         (followers.c.followed_id == Post.user_id)
                     ).filter(followers.c.follower_id == self.id)
