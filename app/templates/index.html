@@ -2,20 +2,22 @@
 
 {% block content %}
          <h1>Hi, {{  current_user.username  }}</h1>
-         <form action="" method="post">
-            {{ form.hidden_tag() }}
-            <p>
-                {{ form.status(cols=50, rows=2) }}
-                {% for error in form.status.errors %}
-                    <span style="color: red">{{error}}</span>
-                {% endfor %}
-            </p>
-            <p>
-                {{ form.submit() }}
-            </p>
-         </form>
+         {% if form %}
+            <form action="" method="post">
+                {{ form.hidden_tag() }}
+                <p>
+                    {{ form.status(cols=50, rows=2) }}
+                    {% for error in form.status.errors %}
+                        <span style="color: red">{{error}}</span>
+                    {% endfor %}
+                </p>
+                <p>
+                    {{ form.submit() }}
+                </p>
+            </form>
+         {% endif %}
          <br>
-         {% for post in current_user.followed_posts().all() %}
+         {% for post in posts %}
             {% include "_post.html" %}
          {% endfor %}
 {% endblock %}

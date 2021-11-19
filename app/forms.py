@@ -47,3 +47,6 @@ class EditProfileForm(FlaskForm):
 class PostForm(FlaskForm):
     status = TextAreaField("Status", validators=[DataRequired(), Length(min=1, max=280)])
     submit = SubmitField("Send")
+
+class EmptyForm(FlaskForm):
+    submit = SubmitField("Submit")
