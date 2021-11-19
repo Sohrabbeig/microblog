@@ -1,8 +1,8 @@
+from operator import pos
 from flask import render_template, flash, redirect, url_for, request
 from flask_login import login_user, logout_user, current_user, login_required
 from werkzeug.urls import url_parse
 from app import app, db
-from app import forms
 from app.forms import EditProfileForm, EmptyForm, LoginForm, RegisterationForm, PostForm
 from app.models import User, Post
 from datetime import datetime
@@ -28,7 +28,11 @@ def index():
     posts = current_user.followed_posts().paginate(
         page, app.config['POSTS_PER_PAGE'], False
     )
-    return render_template("index.html", title="Home", posts = posts.items, form=form)
+
+    next_url = url_for('index', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('index', page=posts.prev_num) if posts.has_prev else None
+    return render_template("index.html", title="Home", posts = posts.items, form=form, \
+        next_url=next_url, prev_url=prev_url)
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -73,10 +77,13 @@ def user(username):
     form = EmptyForm()
     user = User.query.filter_by(username=username).first_or_404()
     page = request.args.get('page', 1, type=int)
-    posts = user.posts.paginate(
+    posts = user.posts.order_by(Post.timestamp.desc()).paginate(
         page, app.config['POSTS_PER_PAGE'], False
     )
-    return render_template('user.html', title='profile', user=user, form=form, posts=posts.items)
+    next_url = url_for('user', username=user.username, page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('user', username=user.username, page=posts.prev_num) if posts.has_prev else None
+    return render_template('user.html', title='profile', user=user, form=form, \
+        posts=posts.items, next_url=next_url, prev_url=prev_url)
 
 @app.route('/edit_profile', methods = ["GET", "POST"])
 @login_required
@@ -141,4 +148,8 @@ def explore():
     posts = Post.query.order_by(Post.timestamp.desc()).paginate(
         page, app.config['POSTS_PER_PAGE'], False
     )
-    return render_template('index.html', tilte="Explore", posts=posts.items)
+    next_url = url_for('explore', page=posts.next_num) if posts.has_next else None
+    prev_url = url_for('explore', page=posts.prev_num) if posts.has_prev else None
+
+    return render_template('index.html', tilte="Explore", posts=posts.items, \
+        next_url=next_url, prev_url=prev_url)
