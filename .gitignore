@@ -5,3 +5,5 @@ __pycache__/
 app.db
 exports.sh
 
+.DS_Store
+app/.DS_Store
